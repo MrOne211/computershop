@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hbgs.computershop.dao.OrderitemMapper">
+    <insert id="saveItem" parameterType="com.hbgs.computershop.domain.Orderitem">
+        insert into i_orderitem(oid,fid,count,total) values (#{oid},#{fid},#{count},#{total})
+    </insert>
+    <delete id="delete" parameterType="string">
+        delete from i_orderitem where oid = #{oid}
+    </delete>
+    <select id="selectCount" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="int">
+        SELECT SUM(i.count)
+        FROM i_orderitem i,i_order o,i_food f
+        WHERE i.oid = o.oid
+        AND i.fid = f.id
+        AND f.foodName = #{foodName}
+        AND o.ordertime >=#{startTime}
+        AND o.ordertime &lt;=#{endTime}
+        GROUP BY f.foodName
+    </select>
+    <select id="selectMoney" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="double">
+        SELECT SUM(i.total)
+        FROM i_orderitem i,i_order o,i_food f
+        WHERE i.oid = o.oid
+        AND i.fid = f.id
+        AND f.foodName = #{foodName}
+        AND o.ordertime >=#{startTime}
+        AND o.ordertime &lt;=#{endTime}
+        GROUP BY f.foodName
+    </select>
+    <select id="selectCountCount" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="int">
+        SELECT SUM(i.count)
+        FROM i_orderitem i
+        LEFT JOIN i_order o
+        ON i.oid = o.oid
+        LEFT JOIN i_food f
+        ON i.fid = f.id
+        where o.ordertime >=#{startTime}
+        AND o.ordertime &lt;=#{endTime}
+    </select>
+    <select id="selectMoneyCount" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="double">
+        SELECT SUM(i.total)
+        FROM i_orderitem i
+        LEFT JOIN i_order o
+        ON i.oid = o.oid
+        LEFT JOIN i_food f
+        ON i.fid = f.id
+        where o.ordertime >=#{startTime}
+        AND o.ordertime &lt;=#{endTime}
+    </select>
+    <select id="selectPieData" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="double">
+        SELECT SUM(i.total) money
+        FROM i_orderitem i,i_order o,i_food f,i_foodtype t
+        WHERE i.oid = o.oid
+        AND i.fid = f.id
+        AND f.typeid = t.id
+        AND t.typeName = #{typeName}
+        AND o.ordertime >=#{startTime}
+        AND o.ordertime &lt;=#{endTime}
+        GROUP BY t.typeName
+    </select>
+</mapper>

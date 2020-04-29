@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hbgs.computershop.dao.OrderMapper">
+    <insert id="saveOrder" parameterType="com.hbgs.computershop.domain.Order">
+        insert into i_order(oid,uid,subtotal,ordertime,tid) values (#{oid},#{uid},#{subtotal},#{ordertime},#{tid})
+    </insert>
+    <select id="list" parameterType="com.hbgs.computershop.domain.SearchParam" resultMap="OrderMap">
+        select * from (
+            SELECT o.oid,o.subtotal,o.ordertime,i.count,i.total,u.`name`,f.*,t.tableName,o.tid
+            FROM i_orderitem i
+            LEFT JOIN  i_order o
+            ON o.oid=i.oid
+            LEFT JOIN i_user u
+            ON o.uid = u.id
+            LEFT JOIN i_food f
+            ON i.fid=f.id
+            LEFT JOIN i_table t
+            ON o.tid = t.id
+        )s
+        WHERE s.oid like '%${input}%'
+         AND s.ordertime >=#{startTime}
+        AND s.ordertime &lt;=#{endTime}
+        <if test="tid!=null ">
+            and s.tid = #{tid}
+        </if>
+    </select>
+    <select id="listExcel" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="com.hbgs.computershop.domain.ExcelData">
+       select * from (
+       SELECT o.oid,o.ordertime,t.tableName,i.count,i.total,IFNULL(u.`name`,'职员已离职') name,IFNULL(f.foodName,'菜品已删除') foodName,if(f.isDiscount=0,f.price,f.price*f.discount/10) price
+        FROM i_orderitem i
+        LEFT JOIN i_order o
+        ON o.oid=i.oid
+        LEFT JOIN i_user u
+        ON o.uid = u.id
+        LEFT JOIN i_food f
+        ON i.fid=f.id
+        LEFT JOIN i_table t
+        ON o.tid = t.id
+        )s
+         WHERE s.oid like '%${input}%'
+         AND s.ordertime >=#{startTime}
+        AND s.ordertime &lt;=#{endTime}
+    </select>
+    <resultMap id="OrderMap" type="com.hbgs.computershop.domain.Order">
+        <id column="oid" property="oid"/>
+        <result column="subtotal" property="subtotal"/>
+        <result column="ordertime" property="ordertime"/>
+        <result column="name" property="name"/>
+        <result column="tableName" property="tableName"/>
+        <collection property="orderitems" ofType="com.hbgs.computershop.domain.Orderitem" resultMap="OrderitemMap"></collection>
+    </resultMap>
+    <resultMap id="OrderitemMap" type="com.hbgs.computershop.domain.Orderitem">
+        <id column="iid" property="id"/>
+        <result column="count" property="count"/>
+        <result column="total" property="total"/>
+        <association property="food" resultMap="FoodMap"/>
+    </resultMap>
+    <resultMap id="FoodMap" type="com.hbgs.computershop.domain.Food">
+        <id column="id" property="id"/>
+        <result column="foodName" property="foodName"/>
+        <result column="img" property="img"/>
+        <result column="typeid" property="typeid"/>
+        <result column="moduleid" property="moduleid"/>
+        <result column="price" property="price"/>
+        <result column="description" property="description"/>
+        <result column="isDiscount" property="isDiscount"/>
+        <result column="discount" property="discount"/>
+        <result column="state" property="state"/>
+    </resultMap>
+    <select id="selectCount" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="java.lang.Integer">
+        SELECT count(*) FROM i_order WHERE ordertime >=#{startTime} AND ordertime &lt;=#{endTime}
+    </select>
+    <delete id="delete" parameterType="string">
+        delete from i_order where oid = #{oid}
+    </delete>
+</mapper>

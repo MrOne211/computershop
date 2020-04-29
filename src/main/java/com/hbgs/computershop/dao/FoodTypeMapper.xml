@@ -1,0 +1,24 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hbgs.computershop.dao.FoodTypeMapper">
+    <select id="getList" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="com.hbgs.computershop.domain.FoodType">
+        select * from i_foodType where typeName != '无' and typeName like '%${input}%'
+    </select>
+    <select id="list" resultType="com.hbgs.computershop.domain.FoodType">
+        select * from i_foodType where typeName != '无'
+    </select>
+    <select id="findTypeByTypeName" parameterType="string" resultType="com.hbgs.computershop.domain.FoodType">
+        select * from i_foodType where typeName = #{typeName}
+    </select>
+    <select id="findFoodTypeById" parameterType="int" resultType="com.hbgs.computershop.domain.FoodType">
+        select * from i_foodType where id = #{id}
+    </select>
+    <insert id="addType" parameterType="string">
+        insert into i_foodType(typeName) values (#{typeName})
+    </insert>
+    <update id="update" parameterType="com.hbgs.computershop.domain.FoodType">
+        update i_foodType set typeName = #{typeName} where id = #{id}
+    </update>
+    <delete id="delete" parameterType="int">
+        delete from i_foodType where id = #{id}
+    </delete>
+</mapper>

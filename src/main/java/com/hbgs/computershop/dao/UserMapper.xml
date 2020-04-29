@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hbgs.computershop.dao.UserMapper">
+    <select id="login" resultType="com.hbgs.computershop.domain.User" parameterType="string">
+        select u.*,r.rootName from i_user u,i_root r where u.root = r.id and u.username = #{username}
+    </select>
+    <select id="findUserById" parameterType="string" resultType="com.hbgs.computershop.domain.User">
+        select u.*,r.rootName from i_user u,i_root r where u.root = r.id and u.id = #{id}
+    </select>
+    <select id="findUserByUsername" parameterType="com.hbgs.computershop.domain.User" resultType="com.hbgs.computershop.domain.User">
+        select u.*,r.rootName from i_user u,i_root r where u.root = r.id and u.username = #{username}
+    </select>
+    <select id="findImg" parameterType="string" resultType="com.hbgs.computershop.domain.User">
+        select u.*,r.rootName from i_user u,i_root r where u.root = r.id and u.img = #{img}
+    </select>
+    <select id="list" parameterType="com.hbgs.computershop.domain.SearchParam" resultType="com.hbgs.computershop.domain.User">
+        select u.*,r.rootName from i_user u,i_root r where u.root = r.id and username !='root' and concat(u.username,r.rootName,u.name) like '%${input}%'
+    </select>
+    <select id="findUsers" parameterType="string" resultType="com.hbgs.computershop.domain.User">
+        select * from i_user where username = #{username}
+    </select>
+    <insert id="addUser" parameterType="com.hbgs.computershop.domain.User">
+        insert into i_user(username,password,root,img,name,date) values(#{username},#{password},#{root},#{img},#{name},#{date})
+    </insert>
+    <update id="update" parameterType="com.hbgs.computershop.domain.User">
+        update i_user set username = #{username},root = #{root},img = #{img},name = #{name} where id = #{id}
+    </update>
+    <update id="updatePass" parameterType="com.hbgs.computershop.domain.User">
+        update i_user set password = #{password} where username = #{username}
+    </update>
+    <update id="updateState" parameterType="com.hbgs.computershop.domain.SearchParam">
+        update i_user set state = #{event} where id = #{id}
+    </update>
+    <update id="lock" parameterType="com.hbgs.computershop.domain.SearchParam">
+        update i_user set state = 0 where id = #{id}
+    </update>
+    <update id="unlock" parameterType="com.hbgs.computershop.domain.SearchParam">
+        update i_user set state = 1 where id = #{id}
+    </update>
+    <update id="lockById" parameterType="int">
+        update i_user set state = 0,root = 5 where root = #{id}
+    </update>
+    <update id="updateRate" parameterType="com.hbgs.computershop.domain.User">
+        update i_user set serviceTimes = serviceTimes+1,serviceGrade = serviceGrade+#{serviceGrade} where id = #{id}
+    </update>
+    <delete id="delete" parameterType="com.hbgs.computershop.domain.SearchParam">
+        delete from i_user where id = #{id}
+    </delete>
+</mapper>

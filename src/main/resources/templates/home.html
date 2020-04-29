@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>电脑商城</title>
+
+</head>
+<script type="text/javascript" th:src="@{/js/jquery-3.4.1.min.js}"></script>
+<script type="text/javascript">
+    function login() {
+
+    };
+    function reset() {
+        $("#name").val("");
+        $("#pass").val("");
+    }
+</script>
+<body>
+<table>
+    <tr>
+        <td>
+            用户名：
+        </td>
+        <td>
+            <input id="name" type="text" name="username"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            密码：
+        </td>
+        <td>
+            <input id="pass" type="password" name="password"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button onclick="login()">登录</button>
+        </td>
+        <td>
+            <button onclick="reset()">重置</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
